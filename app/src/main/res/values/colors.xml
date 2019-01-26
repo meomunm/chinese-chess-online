@@ -3,4 +3,14 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="backgroundEdittext">#F5F5F8</color>
+    <color name="backgroundColorLogin">#7C80F8</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="backgroundColorSignUp">#4081E2</color>
+
+    //color for ripple button #1fbad6
+    <color name="rippleEffectColor">#f816a463</color>
+    <color name="btnSignIn">#4181E2</color>
+    <color name="btnTextColor">#83838c</color>
 </resources>

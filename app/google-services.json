@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "43066726320",
+    "firebase_url": "https://chinese-chess-online.firebaseio.com",
+    "project_id": "chinese-chess-online",
+    "storage_bucket": "chinese-chess-online.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:43066726320:android:30825413dd13e096",
+        "android_client_info": {
+          "package_name": "techkids.vn.chinesechessonline"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "43066726320-19669a58cqp7ns7dk75egt09h2pckh3r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "techkids.vn.chinesechessonline",
+            "certificate_hash": "67af7401e986fcb20b52c64cda95de0361588105"
+          }
+        },
+        {
+          "client_id": "43066726320-qnn95siftmfbqkmq2vcuag22d4g6npsh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsW06-RUL8HY3r-nu_XZsysMls_rgy4w8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "43066726320-qnn95siftmfbqkmq2vcuag22d4g6npsh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
