@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-import techkids.vn.chinesechessonline.R;
 import techkids.vn.chinesechessonline.controllers.GameController;
 
 public class GameActivity extends AppCompatActivity {

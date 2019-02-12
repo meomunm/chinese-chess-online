@@ -1,13 +1,9 @@
 package techkids.vn.chinesechessonline.controllers;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.Log;
 import android.view.Display;
-import android.view.View;
 
-import techkids.vn.chinesechessonline.activities.GameActivity;
-import techkids.vn.chinesechessonline.models.GameSound;
 import techkids.vn.chinesechessonline.views.DialogCustomLayout;
 import techkids.vn.chinesechessonline.views.GameView;
 
@@ -15,9 +11,9 @@ import techkids.vn.chinesechessonline.views.GameView;
 public class GameController {
     private final String TAG = GameController.class.toString();
 
+    Context context;
     GameView gameView;
     Display screenSize;
-    Context context;
     GameSound soundManager;
 
     public GameController(Context context, Display screenSize) {
@@ -27,6 +23,13 @@ public class GameController {
         this.soundManager = new GameSound(context);
     }
 
+    public void playSoundGo(){
+        soundManager.playSoundGo();
+    }
+
+    public void playSoundEat(){
+        soundManager.playSoundEat();
+    }
 
     public void startNewGame() {
         this.chooseSide();
