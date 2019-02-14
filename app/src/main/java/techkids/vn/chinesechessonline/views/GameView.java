@@ -13,10 +13,12 @@ import android.media.SoundPool;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import techkids.vn.chinesechessonline.R;
 import techkids.vn.chinesechessonline.controllers.GameController;
 import techkids.vn.chinesechessonline.controllers.GameSound;
+import techkids.vn.chinesechessonline.controllers.Role;
 import techkids.vn.chinesechessonline.models.ChessModel;
 import techkids.vn.chinesechessonline.utils.DrawUtils;
 
@@ -55,6 +57,7 @@ public class GameView extends View {
     int dj;
 
     Rect chessRect;
+    Role role; //Quản lý việc di chuyển theo lượt trong game, quân cờ thuộc vùng nào - có được di chuyển hay ko sẽ do Role quyết định
 
     private Matrix matrix;
 
@@ -134,7 +137,6 @@ public class GameView extends View {
         chooseTarget = Bitmap.createBitmap(BitmapFactory.decodeResource(res, R.drawable.choice), 0, 0, size, size, matrix, true);
         choosedTarget = Bitmap.createBitmap(BitmapFactory.decodeResource(res, R.drawable.choice2), 0, 0, size, size, matrix, true);
 
-
         //tạo ảnh bitmap dựa trên drawable và gộp 2 mảng chessRed và chessBlack vào làm 1
         int[] chessRes = isRed ? chessModel.getRedChessRes() : chessModel.getBlackChessRes();
         for (int i = 0; i < chessRes.length; i++) {
@@ -148,13 +150,16 @@ public class GameView extends View {
             chessImage[i] = Bitmap.createBitmap(BitmapFactory.decodeResource(res, chessRes[i]), 0, 0, size, size, matrix, true);
         }
 
-//        if (isRed) {
-//            role = new Role(7, 15);
-//        } else {
-//            role = new Role(0, 8);
-//        }
+        if (isRed) {
+            //Tao ra khu vực di chuyển trong game (những quân cờ thuộc khu vực này sẽ được di chuyển)
+            role = new Role(7, 15);
+            Log.d(TAG, "renderChess: create Red role");
+        } else {
+            //Red luôn được quyền đi trước
+            role = new Role(0, 8);
+            Log.d(TAG, "renderChess: create Black role");
+        }
 
-        //...something
         canDraw = true;
         postInvalidate();
     }
@@ -209,19 +214,26 @@ public class GameView extends View {
 
         //người dùng click di chuyển bất kì
         else {
-            if (canMove(selectedPosition_i, selectedPosition_j)) {
+            if (canMove(selectedPosition_i, selectedPosition_j)&& whoseTurn()) {
                 //vị trí mới sẽ bằng giá trị của vị trí cũ
                 //và vị trí cũ thì bằng 0 tức là ô trống trong bàn cờ
-
                 gameController.playSoundGo();
-
                 chessModel.setInItPositionItem(selectedPosition_i, selectedPosition_j, chessModel.getInitPosition()[first_y][first_x]);
                 chessModel.setInItPositionItem(first_y, first_x, 0);
-
-                //something here
-                Log.d(TAG, "clickAndMove: something ^^");
             }
             firstchoice = true;
+        }
+    }
+
+    private boolean whoseTurn() {
+        Log.d(TAG, "whoseTurn: " + chessModel.getInitPosition()[first_y][first_x]);
+
+        if (role.canMove(chessModel.getInitPosition()[first_y][first_x])){
+            role.changeRole();
+            return true;
+        }else {
+            Toast.makeText(myContext, "Chờ đối phương di chuyển đã!", Toast.LENGTH_LONG).show();
+            return false;
         }
     }
 
@@ -308,7 +320,8 @@ public class GameView extends View {
         //di chuyển lên xuống
         if (index_j == first_x && (index_i == first_y + 1 || index_i == first_y - 1)) {
             return true;
-        } else if (index_i == first_y && (index_j == first_x + 1 || index_j == first_x - 1)) {
+        } else  //di chuyển trái phải một đơn vị
+            if (index_i == first_y && (index_j == first_x + 1 || index_j == first_x - 1)) {
             return true;
         }
         return false;
@@ -343,6 +356,20 @@ public class GameView extends View {
     //kiểm tra xem di chuyển có hợp lệ không?
     private boolean kingMove(int index_i, int index_j) {
         //tướng chỉ được phép di chuyển trong vùng ô vuông X
+        if (chessModel.getInitPosition()[first_y][first_x] != 0){
+            if(chessModel.getInitPosition()[first_y][first_x] == ChessModel.B_KING){
+                //không được di chuyển
+                if (index_i > 2 ||  index_i < 0 || index_j < 3 || index_j > 5){
+                    return false;
+                }else if(isMoveNear(index_i, index_j)){ //được di chuyển
+                    //why have for in here?
+//                    for (){
+//
+//                    }
+                }
+            }
+        }
+
         return true;
     }
 
