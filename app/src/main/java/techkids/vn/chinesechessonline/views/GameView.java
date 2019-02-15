@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.media.SoundPool;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 
 import techkids.vn.chinesechessonline.R;
 import techkids.vn.chinesechessonline.controllers.GameController;
-import techkids.vn.chinesechessonline.controllers.GameSound;
 import techkids.vn.chinesechessonline.controllers.Role;
 import techkids.vn.chinesechessonline.models.ChessModel;
 import techkids.vn.chinesechessonline.utils.DrawUtils;
@@ -214,7 +212,7 @@ public class GameView extends View {
 
         //người dùng click di chuyển bất kì
         else {
-            if (canMove(selectedPosition_i, selectedPosition_j)&& whoseTurn()) {
+            if (canMove(selectedPosition_i, selectedPosition_j) && whoseTurn()) {
                 //vị trí mới sẽ bằng giá trị của vị trí cũ
                 //và vị trí cũ thì bằng 0 tức là ô trống trong bàn cờ
                 gameController.playSoundGo();
@@ -228,24 +226,26 @@ public class GameView extends View {
     private boolean whoseTurn() {
         Log.d(TAG, "whoseTurn: " + chessModel.getInitPosition()[first_y][first_x]);
 
-        if (role.canMove(chessModel.getInitPosition()[first_y][first_x])){
+        if (role.canMove(chessModel.getInitPosition()[first_y][first_x])) {
             role.changeRole();
             return true;
-        }else {
+        } else {
             Toast.makeText(myContext, "Chờ đối phương di chuyển đã!", Toast.LENGTH_LONG).show();
             return false;
         }
     }
 
     private boolean canMove(int index_i, int index_j) {
-        //lấy vị trí quân cờ đang được select
+        //  lấy vị trí quân cờ đang được select
         int choice = chessModel.getInitPosition()[first_y][first_x];
         Log.d(TAG, String.format("canMove: choice = %s, x = %s, y =%s", choice, index_i, index_j));
 
-//             what is this??
-//        if (isTheSameSide(index_i, index_j)) {
-//            return false;
-//        }
+        //ngăn cản việc đi đè lên quân mình
+        //quân mình ăn quân mình
+        if (isTheSameSide(index_i, index_j)) {
+            Toast.makeText(myContext, "Không thể di chuyển, bị vướng đồng minh", Toast.LENGTH_SHORT).show();
+            return false;
+        }
 
         switch (choice) {
             case ChessModel.B_KING:
@@ -254,26 +254,37 @@ public class GameView extends View {
 
             case ChessModel.B_BISHOP:
             case ChessModel.R_BISHOP:
+                //quân sĩ, di chuyển chéo 2 đơn vị trong cung tướng, ko đc phép đi ra ngoài cung tướng
                 return bishopMove(index_i, index_j);
 
             case ChessModel.B_ELEPHANT:
             case ChessModel.R_ELEPHANT:
+                //Quân Tượng cùng với Sỹ là hai quân phòng thủ
+                //nó di chuyển chéo mỗi lần 2 ô nếu không bị cản và không được qua Sông.
                 return elephantMove(index_i, index_j);
 
             case ChessModel.B_HORSE:
             case ChessModel.R_HORSE:
+                //Mã di chuyển theo hình chữ L
+                //nếu không bị cản
                 return horseMove(index_i, index_j);
 
             case ChessModel.B_CAR:
             case ChessModel.R_CAR:
+                //xe đi theo hình dấu cộng nếu không bị cản
                 return carMove(index_i, index_j);
 
             case ChessModel.B_CANON:
             case ChessModel.R_CANON:
+                //pháo di chuyển như xe nhưng nếu muốn ăn 1 quân khác màu
+                // thì phải thông qua 1 quân trên bàn cờ
                 return canonMove(index_i, index_j);
 
             case ChessModel.B_PAWN:
             case ChessModel.R_PAWN:
+                //Quân Tốt khi chưa qua Sông thì nó di chuyển dọc
+                //sau khi đã qua Sông thì Tốt có thể di chuyển theo chiều ngang và dọc
+                // Nó chỉ di chuyển mỗi lần 1 ô và chỉ tiến lên không được lùi lại.
                 return pawnMove(index_i, index_j);
 
             default:
@@ -312,6 +323,7 @@ public class GameView extends View {
                 }
             }
         }
+        Toast.makeText(myContext, "Nước di chuyển không hợp lệ!", Toast.LENGTH_SHORT).show();
         return false;
     }
 
@@ -322,58 +334,254 @@ public class GameView extends View {
             return true;
         } else  //di chuyển trái phải một đơn vị
             if (index_i == first_y && (index_j == first_x + 1 || index_j == first_x - 1)) {
-            return true;
-        }
+                return true;
+            }
+        Toast.makeText(myContext, "Không thể di chuyển chéo!", Toast.LENGTH_SHORT).show();
         return false;
     }
 
     private boolean canonMove(int index_i, int index_j) {
-        Log.d(TAG, "canonMove: ");
-        return true;
-    }
-
-    private boolean carMove(int index_i, int index_j) {
-        Log.d(TAG, "carMove: ");
-        return true;
-    }
-
-    private boolean horseMove(int index_i, int index_j) {
-        Log.d(TAG, "horseMove: ");
-        return true;
-    }
-
-    private boolean elephantMove(int index_i, int index_j) {
-        Log.d(TAG, "elephantMove: ");
-        return true;
-    }
-
-    private boolean bishopMove(int index_i, int index_j) {
-        Log.d(TAG, "bishopMove: ");
-        return true;
-    }
-
-
-    //kiểm tra xem di chuyển có hợp lệ không?
-    private boolean kingMove(int index_i, int index_j) {
-        //tướng chỉ được phép di chuyển trong vùng ô vuông X
-        if (chessModel.getInitPosition()[first_y][first_x] != 0){
-            if(chessModel.getInitPosition()[first_y][first_x] == ChessModel.B_KING){
-                //không được di chuyển
-                if (index_i > 2 ||  index_i < 0 || index_j < 3 || index_j > 5){
+        int count = 0;      //đê
+        if (index_j == first_x) {
+            //pháo đi lên
+            if (first_y > index_i) {
+                for (int i = first_y - 1; i > index_i; i--) {
+                    //kiểm tra xem có gặp vật cản theo hàng dọc hay không
+                    if (chessModel.getInitPosition()[i][index_j] != 0) {
+                        count++;
+                    }
+                }
+            } else if (first_y < index_i) { //pháo đi xuống, theo hàng dọc
+                for (int i = first_y + 1; i < index_i; i++) {
+                    //kiểm tra xem có gặp vật cản theo hàng dọc hay không
+                    if (chessModel.getInitPosition()[i][index_j] != 0) {
+                        count++;
+                    }
+                }
+            }
+            if (count == 0) {
+                //trên đường di chuyển không gặp vật cản
+                return true;
+            } else if (count == 1) {
+                if (chessModel.getInitPosition()[index_i][index_j] != 0){
+                    return true;
+                }else {
+                    Toast.makeText(myContext, "Di chuyển không hợp lệ!", Toast.LENGTH_SHORT).show();
                     return false;
-                }else if(isMoveNear(index_i, index_j)){ //được di chuyển
-                    //why have for in here?
-//                    for (){
-//
-//                    }
+                }
+            }
+        } else if (index_i == first_y) {   //di chuyển theo hàng ngang
+            //ngang sang trái   <-
+            if (index_j < first_x) {
+                for (int j = first_x - 1; j > index_j; j--) {
+                    if (chessModel.getInitPosition()[index_i][j] != 0) {
+                        count++;
+                    }
+                }
+                return true;
+            } else if (index_j > first_x) {
+                for (int j = first_x + 1; j < index_j; j++) {
+                    if (chessModel.getInitPosition()[index_i][j] != 0) {
+                        count++;
+                    }
+                }
+            }
+            if (count == 0) {
+                //trên đường di chuyển không gặp vật cản
+                return true;
+            } else if (count == 1) {
+                if (chessModel.getInitPosition()[index_i][index_j] != 0){
+                    return true;
+                }else {
+                    Toast.makeText(myContext, "Di chuyển không hợp lệ!", Toast.LENGTH_SHORT).show();
+                    return false;
                 }
             }
         }
 
-        return true;
+        Toast.makeText(myContext, "Di chuyển không hợp lệ!", Toast.LENGTH_SHORT).show();
+        return false;
     }
 
-    private boolean isTheSameSide(int i, int j) {
+    private boolean carMove(int index_i, int index_j) {
+        //di chuyển theo hàng dọc
+        if (index_j == first_x) {
+            //xe đi lên
+            if (first_y > index_i) {
+                for (int i = first_y - 1; i > index_i; i--) {
+                    Log.d(TAG, String.format("carMove: fi = %s; i = %s", first_y, index_i));
+                    //kiểm tra xem có gặp vật cản theo hàng dọc hay không
+                    if (chessModel.getInitPosition()[i][index_j] != 0) {
+                        Toast.makeText(myContext, "Bị vướng vật cản không thể di chuyển! dọc lên", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+                return true;
+            } else if (first_y < index_i) { //xe đi xuống, theo hàng dọc
+                for (int i = first_y + 1; i < index_i; i++) {
+                    Log.d(TAG, String.format("carMove: fi = %s; i = %s", first_y, index_i));
+
+                    //kiểm tra xem có gặp vật cản theo hàng dọc hay không
+                    if (chessModel.getInitPosition()[i][index_j] != 0) {
+                        Toast.makeText(myContext, "Bị vướng vật cản không thể di chuyển! dọc xuống", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+                return true;
+            }
+        } else if (index_i == first_y) {   //di chuyển theo hàng ngang
+            //ngang sang trái   <-
+            if (index_j < first_x) {
+                for (int j = first_x - 1; j > index_j; j--) {
+                    if (chessModel.getInitPosition()[index_i][j] != 0) {
+                        Toast.makeText(myContext, "Bị vướng vật cản không thể di chuyển! ngang trái", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+                return true;
+            } else if (index_j > first_x) {
+                for (int j = first_x + 1; j < index_j; j++) {
+                    if (chessModel.getInitPosition()[index_i][j] != 0) {
+                        Toast.makeText(myContext, "Bị vướng vật cản không thể di chuyển! ngang phải", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        Toast.makeText(myContext, "Di chuyển không hợp lệ!", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    private boolean horseMove(int index_i, int index_j) {
+        //di chuyển lên xuống
+        if (((first_y - index_i == 2 || first_y - index_i == -2)
+                && (first_x - index_j == 1 || first_x - index_j == -1))
+                // di chuyển trái phải
+                || ((first_y - index_i == 1 || first_y - index_i == -1)
+                && (first_x - index_j == 2 || first_x - index_j == -2))) {
+            //mã di chuyển lên và không bị vướng vật cản
+            if (first_y - index_i == 2 && chessModel.getInitPosition()[first_y - 1][first_x] == 0) {
+                return true;
+            }
+            //mã di chuyển xuống và không bị vướng vật cản
+            if (first_y - index_i == -2 && chessModel.getInitPosition()[first_y + 1][first_x] == 0) {
+                return true;
+            }
+            //di chuyển sang bên trái và không bị vướng ngại vật
+            if (first_x - index_j == 2 && chessModel.getInitPosition()[first_y][first_x - 1] == 0) {
+                return true;
+            }
+            //di chuyển sang bên phải và không bị vướng chướng ngại vật
+            if (first_x - index_j == -2 && chessModel.getInitPosition()[first_y][first_x + 1] == 0) {
+                return true;
+            }
+        }
+        Toast.makeText(myContext, "Di chuyển không hợp lệ!", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    private boolean elephantMove(int index_i, int index_j) {
+        //ngăn cản tượng đen qua sông
+        if (chessModel.getInitPosition()[first_y][first_x] == ChessModel.B_ELEPHANT && index_i > 4) {
+            Toast.makeText(myContext, "Tượng không thể sang sông!", Toast.LENGTH_SHORT).show();
+            return false;
+        } else
+            //ngăn cản tượng đỏ qua sông
+            if (chessModel.getInitPosition()[first_y][first_x] == ChessModel.R_ELEPHANT && index_i < 5) {
+                Toast.makeText(myContext, "Tượng không thể sang sông!", Toast.LENGTH_SHORT).show();
+                return false;
+            } else
+                //cho phép di chuyển theo hình chéo
+                if (first_y - index_i == 2 || first_y - index_i == -2 && first_x - index_j == 2 || first_x - index_j == -2) {
+
+                    //kiểm tra xem có bị cản bởi quân cờ nào, trong nước di chuyển hay không?
+                    if (chessModel.getInitPosition()[(first_y + index_i) / 2][(first_x + index_j) / 2] == 0) {
+                        return true;
+                    } else {
+                        Toast.makeText(myContext, "đang bị cản bởi quân cờ khác!", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                } else
+                    Toast.makeText(myContext, "Nước di chuyển không hợp lệ!", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    private boolean bishopMove(int index_i, int index_j) {
+        if (chessModel.getInitPosition()[first_y][first_x] == ChessModel.B_BISHOP) {
+            Log.d(TAG, "bishopMove: ");
+
+            if (index_i > 2 || index_i < 0 || index_j < 3 || index_j > 5) {      //không được di chuyển ra ngoài cung tướng
+                Toast.makeText(myContext, "Không thể đi ra ngoài cung tướng!", Toast.LENGTH_SHORT).show();
+                return false;
+            } else { //được phép di chuyển
+                if (first_y == 1 && first_x == 4) { //quân sĩ đang ở trung tâm của cung tướng thì được phép di chuyển theo hình X
+                    if ((index_i == 0 && index_j == 3) || (index_i == 0 && index_j == 5)
+                            || (index_i == 2 && index_j == 3) || (index_i == 2 && index_j == 5)) {
+                        return true;
+                    } else
+                        Toast.makeText(myContext, "Nước di chuyển không hợp lệ!", Toast.LENGTH_SHORT).show();
+                    return false;
+                } else {
+                    return index_i == 1 && index_j == 4;
+                }
+            }
+        } else if (chessModel.getInitPosition()[first_y][first_x] == ChessModel.R_BISHOP) {
+            if (index_i < 7 || index_i > 9 || index_j < 3 || index_j > 5) {
+                Toast.makeText(myContext, "Không thể đi ra ngoài cung tướng!", Toast.LENGTH_SHORT).show();
+                return false;
+            } else {
+                if (first_y == 8 && first_x == 4) { //đang ở trong cung tướng
+                    if ((index_i == 9 && index_j == 3) || (index_i == 9 && index_j == 5)
+                            || (index_i == 7 && index_j == 3) || (index_i == 7 && index_j == 5)) {
+                        return true;
+                    } else {
+                        Toast.makeText(myContext, "Nước di chuyển không hợp lệ!", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                } else {
+                    return index_i == 8 && index_j == 4;
+                }
+            }
+        }
+        Toast.makeText(myContext, "Nước di chuyển không hợp lệ!", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+
+    // kiểm tra xem di chuyển có hợp lệ không?
+    private boolean kingMove(int index_i, int index_j) {
+        // tướng chỉ được phép di chuyển trong vùng ô vuông X
+        //giới hạn di chuyển của tướng trong một cung tướng
+        if (chessModel.getInitPosition()[first_y][first_x] == ChessModel.B_KING) {  //di chuyển của Black King
+            //không được di chuyển
+            if (index_i > 2 || index_i < 0 || index_j < 3 || index_j > 5) {
+                Toast.makeText(myContext, "Không thể đi ra ngoài cung tướng!", Toast.LENGTH_SHORT).show();
+                return false;
+            } else  //được di chuyển
+                return isMoveNear(index_i, index_j);
+        } else if (chessModel.getInitPosition()[first_y][first_x] == ChessModel.R_KING) { //di chuyển của Red King
+            //giới hạn di chuyển của tướng trong 1 cung tướng
+            if (index_i < 7 || index_i > 9 || index_j < 3 || index_j > 5) {
+                Toast.makeText(myContext, "Không thể đi ra ngoài cung tướng!", Toast.LENGTH_SHORT).show();
+                return false;
+            } else  // được di chuyển
+                return isMoveNear(index_i, index_j);
+        }
+        Toast.makeText(myContext, "Nước di chuyển không hợp lệ!", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    //nếu vị trí mới và vị trí cũ cùng 1 team thì return true
+    private boolean isTheSameSide(int index_i, int index_j) {
+        if ((chessModel.getInitPosition()[first_y][first_x] < 8
+                && chessModel.getInitPosition()[index_i][index_j] < 8
+                && chessModel.getInitPosition()[index_i][index_j] > 0)
+                || (chessModel.getInitPosition()[index_i][index_j] > 7
+                && chessModel.getInitPosition()[first_y][first_x] > 7
+                && chessModel.getInitPosition()[index_i][index_j] < 15)) {
+            return true;
+        }
         return false;
     }
 }
