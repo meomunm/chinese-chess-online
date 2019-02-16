@@ -1,5 +1,7 @@
 package techkids.vn.chinesechessonline.views;
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -9,12 +11,16 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.luolc.emojirain.EmojiRainLayout;
+
 import techkids.vn.chinesechessonline.R;
+import techkids.vn.chinesechessonline.activities.EndGameFragment;
 import techkids.vn.chinesechessonline.controllers.GameController;
 import techkids.vn.chinesechessonline.controllers.Role;
 import techkids.vn.chinesechessonline.models.ChessModel;
@@ -216,11 +222,30 @@ public class GameView extends View {
                 //vị trí mới sẽ bằng giá trị của vị trí cũ
                 //và vị trí cũ thì bằng 0 tức là ô trống trong bàn cờ
                 gameController.playSoundGo();
+
+                //ván cờ kết thúc khi tướng của 1 trong 2 bên bị mất
+                if (chessModel.getInitPosition()[selectedPosition_i][selectedPosition_j] == 1
+                        || chessModel.getInitPosition()[selectedPosition_i][selectedPosition_j] == 8) {
+
+                    chessModel.setInItPositionItem(selectedPosition_i, selectedPosition_j, chessModel.getInitPosition()[first_y][first_x]);
+                    chessModel.setInItPositionItem(first_y, first_x, 0);
+                    postInvalidate();
+                    showDiaglogFragmentEndGame();
+                }
+
+                //di chuyển quân cờ đến vị trí mới
                 chessModel.setInItPositionItem(selectedPosition_i, selectedPosition_j, chessModel.getInitPosition()[first_y][first_x]);
                 chessModel.setInItPositionItem(first_y, first_x, 0);
             }
             firstchoice = true;
         }
+    }
+
+    //show dialogFragment
+    private void showDiaglogFragmentEndGame() {
+        FragmentManager fm = ((AppCompatActivity) myContext).getFragmentManager();
+        EndGameFragment ef = new EndGameFragment();
+        ef.show(fm, "null");
     }
 
     private boolean whoseTurn() {
@@ -363,9 +388,9 @@ public class GameView extends View {
                 //trên đường di chuyển không gặp vật cản
                 return true;
             } else if (count == 1) {
-                if (chessModel.getInitPosition()[index_i][index_j] != 0){
+                if (chessModel.getInitPosition()[index_i][index_j] != 0) {
                     return true;
-                }else {
+                } else {
                     Toast.makeText(myContext, "Di chuyển không hợp lệ!", Toast.LENGTH_SHORT).show();
                     return false;
                 }
@@ -390,9 +415,9 @@ public class GameView extends View {
                 //trên đường di chuyển không gặp vật cản
                 return true;
             } else if (count == 1) {
-                if (chessModel.getInitPosition()[index_i][index_j] != 0){
+                if (chessModel.getInitPosition()[index_i][index_j] != 0) {
                     return true;
-                }else {
+                } else {
                     Toast.makeText(myContext, "Di chuyển không hợp lệ!", Toast.LENGTH_SHORT).show();
                     return false;
                 }
