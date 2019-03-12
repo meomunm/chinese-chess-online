@@ -17,6 +17,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.luolc.emojirain.EmojiRainLayout;
 
 import techkids.vn.chinesechessonline.R;

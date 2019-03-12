@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Chinese Chess Online</string>
+    <string name="chinese_chess_channel_id">techkids.vn.chinesechessonline.meomunm</string>
+    <string name="chinese_chess_channel_name">Chinese Chess Channel</string>
 </resources>

@@ -13,4 +13,5 @@
     <color name="rippleEffectColor">#f816a463</color>
     <color name="btnSignIn">#4181E2</color>
     <color name="btnTextColor">#83838c</color>
+    <color name="textColor_custom">#262626</color>
 </resources>

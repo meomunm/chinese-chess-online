@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:background="@color/backgroundColorLogin"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/civ_user_avatar"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/testprofile"/>
+
+    <TextView
+        android:id="@+id/tv_item_user_name"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="MeoMunm"
+        android:textColor="@color/textColor_custom"
+        android:layout_toStartOf="@id/civ_invite"
+        android:layout_toEndOf="@id/civ_user_avatar"
+        android:layout_width="match_parent"
+        android:textSize="17sp"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_user_win_counter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/tv_item_user_name"
+        android:layout_marginBottom="-24dp"
+        android:layout_toStartOf="@id/civ_invite"
+        android:layout_toEndOf="@id/civ_user_avatar"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="Win rate: 90%"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tv_item_user_rank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/tv_item_user_name"
+        android:layout_marginBottom="-46dp"
+        android:layout_toStartOf="@id/civ_invite"
+        android:layout_toEndOf="@id/civ_user_avatar"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="Rank: Master "
+        android:textSize="15sp" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/civ_invite"
+        android:layout_width="70dp"
+        android:background="@color/backgroundColorLogin"
+        android:layout_height="70dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/testprofile"/>
+
+</RelativeLayout>
